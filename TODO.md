@@ -3,7 +3,7 @@
 ## 🔴 **TOMORROW (Oct 2, 2025)** - Data Collection
 
 ### Step 1: Upload Sample Data
-- [ ] Wgraj 5-10 przykładowych mieszkań do `samples/`
+- [✅] Wgraj 5-10 przykładowych mieszkań do `samples/`
   - Różne typy: M1, M2, M3, M4
   - Z różnymi pomieszczeniami
   - Format: `apartment_001.json`, `apartment_002.json`, ...
@@ -20,16 +20,16 @@
 - [ ] Wygeneruj: `samples/furniture_catalog.json`
 
 ### Step 3: Run EDA on Apartments
-- [ ] Otwórz: `notebooks/eda_apartments.ipynb`
-- [ ] Zaktualizuj `data_dir` → ścieżka do `samples/`
-- [ ] Uruchom wszystkie celle
-- [ ] Zapisz wyniki do `configs/eda_stats.json`
+- [✅] Otwórz: `notebooks/eda_apartments.ipynb`
+- [✅] Zaktualizuj `data_dir` → ścieżka do `samples/`
+- [✅] Uruchom wszystkie celle
+- [✅] Zapisz wyniki do `configs/eda_stats.json`
 
 ### Step 4: Analyze Results
-- [ ] Jakie `furniture_ids` występują w mieszkaniach?
-- [ ] Czy wszystkie ID są w katalogu SVG? (jeśli nie → trzeba dodać)
-- [ ] Jakie `room_types` są w danych?
-- [ ] Ile średnio mebli na pokój?
+- [✅] Jakie `furniture_ids` występują w mieszkaniach?
+- [✅] Czy wszystkie ID są w katalogu SVG? (jeśli nie → trzeba dodać)
+- [✅] Jakie `room_types` są w danych?
+- [✅] Ile średnio mebli na pokój?
 
 ---
 

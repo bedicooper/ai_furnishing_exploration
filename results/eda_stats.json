@@ -1,0 +1,42 @@
+{
+  "total_apartments_scanned": 503,
+  "apartments_with_furniture": 503,
+  "apartments_without_furniture": 0,
+  "unique_room_types": 12,
+  "unique_furniture_ids": 39,
+  "top_room_types": {
+    "idBedroom": 553,
+    "idBathroom": 545,
+    "idLivingRoomWithAnnex": 492,
+    "idBalcony": 403,
+    "idCorridor": 380,
+    "idTerrace": 104,
+    "idGarden": 103,
+    "idWardrobe": 64,
+    "idLivingRoom": 11,
+    "idKitchen": 11
+  },
+  "top_furniture_ids": {
+    "sz": 1212,
+    "kitchenette": 891,
+    "wb": 509,
+    "fr": 503,
+    "sip": 503,
+    "wc2": 493,
+    "wcg": 493,
+    "stv": 450,
+    "tvo": 450,
+    "dc": 432,
+    "st": 334,
+    "b22": 328,
+    "dw2": 310,
+    "f2": 254,
+    "wm2": 200,
+    "dw": 193,
+    "sh": 190,
+    "tvs": 187,
+    "wm": 181,
+    "r5": 177
+  },
+  "avg_furniture_per_apartment": 19.36779324055666
+}
