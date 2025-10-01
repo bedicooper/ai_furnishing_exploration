@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.eggs/
+*.pkl
+*.h5
+*.pt
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints
+*.nbconvert.ipynb
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
