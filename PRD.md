@@ -3,7 +3,27 @@
 ## 1. Problem Statement & Goals
 
 ### Business Problem
-Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań na podstawie ich planów architektonicznych. 
+Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań na podstawie ich planów architektonicznych
+
+### External Dependencies
+- [✅] **Dataset**: 503 apartments analyzed (sample from ~100k in `Jednostka/datasets/apartment_jsons/`)
+- [✅] **Furniture catalog**: Schema understood, 1 example available (`b1.json`)
+- [ ] **Compute**: Jednostka GPU dla fine-tuningu (needed for production)
+- [ ] **APIs**: OpenAI/Claude dla prototypu (opcjonalne)
+
+### Data Constraints
+- ✅ **Sample data analyzed**: 503 apartments from 2 projects (AQU-MAR, MET-ZAC)
+  - 39 unique furniture IDs in use
+  - 12 room types (idBedroom, idBathroom, idLivingRoomWithAnnex, etc.)
+  - 100% furniture coverage
+  - ~19.4 furniture items per apartment
+- ⚠️ **Limited furniture catalog access**: Due to data confidentiality
+  - Have schema and one example (`b1.json`)
+  - Cannot share full catalog in exploration repo
+  - Full access for internal offline models to complete library
+- ⚠️ **Full dataset access**: ~100k apartments available in Jednostka
+  - Exploration done on 503 sample
+  - Full pipeline will process all 100k 
 
 **Input:** JSON z pustym mieszkaniem (ściany, okna, drzwi, pomieszczenia bez mebli)  
 **Output:** JSON z tym samym mieszkaniem + wygenerowane meble w `equipments` i `caseworks`
@@ -38,8 +58,13 @@ Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań
   - **Output format**: JSON ze strukturą `compartments[].equipments[]` + `caseworks[]`
 
 ### Data Pipeline Plan
+- [✅] **Exploration** (COMPLETE):
+  - EDA on 503 apartments → `results/eda_stats.json`
+  - Schema understanding → `FURNITURE_SCHEMA.md`
+  - Data quality assessment → `results/EDA_ANALYSIS.md`
+  
 - [ ] **Collection** (`datasets_pipelines/apartment_jsons_pipe/1_collect/`):
-  - Wczytać wszystkie JSONy
+  - Wczytać wszystkie ~100k JSONy z Jednostka
   - Filtrować tylko mieszkania z co najmniej 1 meblem
   
 - [ ] **Validation** (`2_validate/`):
@@ -52,7 +77,7 @@ Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań
     - Input: JSON z pustymi `equipments[]` i `caseworks[]`
     - Output: JSON z oryginalnymi meblami
   - Normalizacja współrzędnych do [0,1]
-  - Ekstrakcja features: area, perimeter, room_type, door_positions, window_positions
+  - Ekstrakcja features: area, perimeter, name_cad, door_positions, window_positions
   
 - [ ] **Split** (`4_split/`):
   - Train: 80% (~80k)
@@ -113,11 +138,12 @@ Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań
 
 ## 4. Exploration Roadmap
 
-### Phase 1: Data Understanding
-- [ ] EDA notebook (`0_eda.ipynb`)
-- [ ] Data quality assessment
-- [ ] Feature engineering ideas
-- [ ] Baseline model performance
+### Phase 1: Data Understanding ✅ COMPLETE
+- [✅] EDA notebook (`notebooks/eda_apartments.ipynb`)
+- [✅] Data quality assessment (`results/EDA_ANALYSIS.md`)
+- [✅] Furniture schema documented (`FURNITURE_SCHEMA.md`)
+- [✅] Feature engineering: room_type (`name_cad`), area, perimeter, window_area, boundary
+- [ ] Baseline model performance (next: move to `ai_furnishing` repo)
 
 ### Phase 2: Model Experiments
 - [ ] Baseline implementation (`1_baseline.ipynb`)
@@ -150,6 +176,34 @@ Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań
 - [ ] Data availability/quality
 - [ ] Model performance
 - [ ] Computational requirements
+- [x] **Insert point heterogeneity** (DISCOVERED 2025-10-01)
+
+### Known Issues & Mitigations
+
+#### Issue 1: Insert Point Heterogeneity ✅ RESOLVED (Oct 2)
+**Problem**: SVG furniture definitions have inconsistent insert points
+
+**Resolution**: Discovered structured JSON furniture definitions with:
+- `insert_point_type`: ["wall_based", "universal", "opening", "standalone"]
+- Boundaries are RELATIVE to insert_point
+- Schema clarifies placement logic per type
+
+**New approach**: ✅ BETTER THAN EXPECTED
+- Use JSON parser instead of SVG parser
+- Filter out `"opening"` type (doors/windows - don't place)
+- Apply type-specific placement logic in Stage 2
+- `clash_detection_boundary` provided for collision detection
+- See: `NOTES_2025_10_02_furniture_jsons.md`
+
+#### Issue 2: Collision Detection in 3D ℹ️ DISCOVERED (Oct 2)
+**Finding**: Furniture has `layer_index` for vertical collision layers
+- Example: Chair (layer=2) can go under Table (layer=1)
+- Enables realistic multi-layer arrangements
+
+**Mitigation**: 
+- Initial implementation: Treat all as same layer (conservative)
+- Future optimization: Layer-aware collision detection
+- Low priority for MVP
 
 ### Mitigation Strategies
 - Risk 1 → Mitigation plan
@@ -174,19 +228,24 @@ Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań
 ## Decision Log
 
 | Date | Decision | Rationale |
-|------|----------|-----------|
+|------|----------|-----------|  
 | 2025-10-01 | Hybrid 2-stage pipeline (semantic + geometric) | LLM świetny w pattern matching (room→furniture), słaby w geometrii (coordinates) |
 | 2025-10-01 | Stage 1: Fine-tune LLM dla semantyki | 100k przykładów wystarczy do nauki par (idBedroom→b2) |
 | 2025-10-01 | Stage 2: Rule-based geometric solver | Insert points wymagają zrozumienia wymiarów i kolizji |
-| 2025-10-01 | Furniture catalog z SVG | Potrzebne dimensions (width, height) dla geometric solver |
+| 2025-10-02 | Furniture as JSON (not SVG) | Discovered structured JSON with dimensions, boundaries, insert_point_type |
+| 2025-10-02 | Boundaries are RELATIVE to insert_point | Simplifies transformation logic (scale → rotate → translate) |
+| 2025-10-03 | Room type = `name_cad` field | Key for extracting room features from apartment JSON |
+| 2025-10-03 | Research phase complete, move to production repos | 503 apartments analyzed, schema understood, ready for `datasets_pipelines` and `ai_furnishing` |
 
 ## Next Actions
 
-### Faza 0: Quick Prototype (1 tydzień)
-- [ ] **Wybrać 500 mieszkań** z `apartment_jsons` (różne typy M1-M4)
-- [ ] **Stworzyć `0_prototype.ipynb`** w `ai_furnishing_exploration/notebooks/`
-- [ ] **Przetestować zero-shot** (GPT-4/Claude): czy potrafi generować meble?
-- [ ] **Ocenić wyniki**: czy ma sens iść dalej?
+### Phase 0: Research & Exploration ✅ COMPLETE (Oct 1-3, 2025)
+- [✅] **503 apartments** uploaded and analyzed
+- [✅] **EDA complete** (`notebooks/eda_apartments.ipynb` → `results/eda_stats.json`)
+- [✅] **Furniture schema** understood and documented (`FURNITURE_SCHEMA.md`)
+- [✅] **Data structure** mapped (room_type = `name_cad`, boundaries are relative)
+- [✅] **Approach defined**: Hybrid 2-Stage Pipeline (Semantic + Geometric)
+- **✅ Decision**: Ready to proceed with full pipeline and model training
 
 ### Faza 1: Data Pipeline (2 tygodnie)
 - [ ] **EDA**: `datasets_pipelines/apartment_jsons_pipe/0_scan/`
