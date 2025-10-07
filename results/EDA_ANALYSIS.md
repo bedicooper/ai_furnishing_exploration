@@ -148,7 +148,7 @@
 ```python
 # Use json_processing.create_training_pair()
 # Generate (empty, furnished) for all 503 apartments
-# Export to datasets_pipelines/apartment_jsons_pipe/3_process/
+# Export to datasets_pipelines/furniture_layouts_pipe/3_process/
 ```
 
 ### 4. Understand Caseworks 🟡 MEDIUM

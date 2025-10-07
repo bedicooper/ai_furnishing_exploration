@@ -6,7 +6,7 @@
 Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań na podstawie ich planów architektonicznych
 
 ### External Dependencies
-- [✅] **Dataset**: 503 apartments analyzed (sample from ~100k in `Jednostka/datasets/apartment_jsons/`)
+- [✅] **Dataset**: 503 apartments analyzed (sample from ~100k in `Jednostka/datasets/furniture_layouts/`)
 - [✅] **Furniture catalog**: Schema understood, 1 example available (`b1.json`)
 - [ ] **Compute**: Jednostka GPU dla fine-tuningu (needed for production)
 - [ ] **APIs**: OpenAI/Claude dla prototypu (opcjonalne)
@@ -48,8 +48,8 @@ Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań
 ## 2. Data Strategy
 
 ### Required Datasets
-- [ ] **Dataset: apartment_jsons** (~100k mieszkań z meblami)
-  - Source: `Jednostka/datasets/apartment_jsons/` (już istniejący)
+- [ ] **Dataset: furniture_layouts** (~100k mieszkań z meblami)
+  - Source: `Jednostka/datasets/furniture_layouts/` (już istniejący)
   - Size estimate: ~100 000 mieszkań z pełną aranżacją
   - Quality concerns: 
     - Czy wszystkie mieszkania mają meble?
@@ -63,7 +63,7 @@ Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań
   - Schema understanding → `FURNITURE_SCHEMA.md`
   - Data quality assessment → `results/EDA_ANALYSIS.md`
   
-- [ ] **Collection** (`datasets_pipelines/apartment_jsons_pipe/1_collect/`):
+- [ ] **Collection** (`datasets_pipelines/furniture_layouts_pipe/1_collect/`):
   - Wczytać wszystkie ~100k JSONy z Jednostka
   - Filtrować tylko mieszkania z co najmniej 1 meblem
   
@@ -219,7 +219,7 @@ Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań
 - [ ] **Domain expertise**: Konsultacje z architektami wnętrz (walidacja wyników)
 
 ### External Dependencies
-- [ ] **Dataset**: `Jednostka/datasets/apartment_jsons/` (pobrać istnieje)
+- [ ] **Dataset**: `Jednostka/datasets/furniture_layouts/` (pobrać istnieje)
 - [ ] **Compute**: Jednostka GPU dla fine-tuningu
 - [ ] **APIs**: OpenAI/Claude dla prototypu (opcjonalne)
 
@@ -248,11 +248,11 @@ Automatyczne generowanie aranżacji wnętrz (rozmieszczenie mebli) dla mieszkań
 - **✅ Decision**: Ready to proceed with full pipeline and model training
 
 ### Faza 1: Data Pipeline (2 tygodnie)
-- [ ] **EDA**: `datasets_pipelines/apartment_jsons_pipe/0_scan/`
+- [ ] **EDA**: `datasets_pipelines/furniture_layouts_pipe/0_scan/`
   - Ile mieszkań ma meble?
   - Jakie typy pomieszczeń/mebli występują?
   - Czy są błędne dane?
-- [ ] **Zbudować pipeline** w `datasets_pipelines/apartment_jsons_pipe/`
+- [ ] **Zbudować pipeline** w `datasets_pipelines/furniture_layouts_pipe/`
 - [ ] **Wygenerować pairs** (empty → furnished)
 
 ### Faza 2: Exploration (2 tygodnie)
